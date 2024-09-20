@@ -58,12 +58,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // });
 
 // #9
-app.get("/name",(request,response)=>{
-  let firstname = request.query.first;
-  let lastname = request.query.last;
-  let name = firstname + " " + lastname;
-  response.json({ name });
-});
+// app.get("/name",(request,response)=>{
+//   let firstname = request.query.first;
+//   let lastname = request.query.last;
+//   let name = firstname + " " + lastname;
+//   response.json({ name });
+// });
 
 // #10
 // app.post("/name",(request,response)=>{
