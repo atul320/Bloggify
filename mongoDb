@@ -1,0 +1,107 @@
+const dotenv = require("dotenv");
+dotenv.config();
+
+const mongoose = require("mongoose");
+
+const uri =
+  "mongodb+srv://bhardwajatul320:2wmoGatwkyZ2zTaC@cluster0.eb9ms.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+
+mongoose.connect(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("connected");
+  });
+
+const personSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  age: Number,
+  favoriteFoods: [{ type: String }],
+});
+let Person = mongoose.model("Person", personSchema);
+
+const createAndSavePerson = async (done) => {
+ let person1 = new Person({
+   name:"Atul",
+   age:20,
+   favouriteFoods:["Burger","Pizza","Sandwich"]
+ })
+  let data = await person1.save();
+  console.log(data);
+  done(null, data);
+};
+
+const createManyPeople = async (arrayOfPeople, done) => {
+  let person2 = await Person.create(arrayOfPeople);
+  done(null, person2);
+};
+
+const findPeopleByName = async (personName, done) => {
+  let data = await Person.find({name:personName})
+  done(null , data);
+};
+
+const findOneByFood = async (food, done) => {
+  let data = await Person.findOne({favoriteFoods:food})
+  done(null , data);
+};
+
+const findPersonById = async (personId, done) => {
+  let data = await Person.findById({_id:personId});
+  done(null, data);
+};
+
+const findEditThenSave = async (personId, done) => {
+  const foodToAdd = "hamburger";
+  let data = await Person.findById({_id:personId});
+  if(data){
+    data.favoriteFoods.push(foodToAdd);
+  }
+  done(null, await data.save());
+};
+
+const findAndUpdate = async (personName, done) => {
+  const ageToSet = 20;
+  await Person.findOneAndUpdate({name:personName},{age:ageToSet},{new:true},(err,data)=>{
+    done(err,data);
+  })
+};
+
+const removeById = (personId, done) => {
+  Person.findByIdAndRemove({_id:personId},(err,data)=>{
+    done(err,data);
+  })
+};
+
+const removeManyPeople = (done) => {
+  const nameToRemove = "Mary";
+  Person.deleteMany({name:nameToRemove},(err,data)=>{
+    done(err,data);
+  })
+};
+
+const queryChain = (done) => {
+  const foodToSearch = "burrito";
+  Person.find({favoriteFoods:foodToSearch}).sort({name:1}).limit(2).select('-age').exec((err,data)=>{
+    done(err,data);
+  })
+};
+
+/** **Well Done !!**
+/* You completed these challenges, let's go celebrate !
+ */
+
+//----- **DO NOT EDIT BELOW THIS LINE** ----------------------------------
+
+exports.PersonModel = Person;
+exports.createAndSavePerson = createAndSavePerson;
+exports.findPeopleByName = findPeopleByName;
+exports.findOneByFood = findOneByFood;
+exports.findPersonById = findPersonById;
+exports.findEditThenSave = findEditThenSave;
+exports.findAndUpdate = findAndUpdate;
+exports.createManyPeople = createManyPeople;
+exports.removeById = removeById;
+exports.removeManyPeople = removeManyPeople;
+exports.queryChain = queryChain;
